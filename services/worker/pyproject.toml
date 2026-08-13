@@ -1,0 +1,35 @@
+[project]
+name = "finance-worker"
+version = "0.1.0"
+description = "Finance background worker composition root."
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "finance-agents",
+  "finance-application",
+  "finance-domain",
+  "finance-persistence",
+  "httpx==0.28.1",
+  "psycopg[binary,pool]==3.2.9",
+  "pyjwt[crypto]==2.13.0",
+]
+
+[project.scripts]
+finance-worker = "finance_worker.main:run"
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/finance_worker"]
+
+[tool.uv.sources]
+finance-agents = { workspace = true }
+finance-application = { workspace = true }
+finance-domain = { workspace = true }
+finance-persistence = { workspace = true }
+
+[tool.platform]
+layer = "composition-root"
+visibility = "private"
+

@@ -1,0 +1,25 @@
+{
+  "capability": "content.create_brief",
+  "contract_version": 1,
+  "consumer": "finance",
+  "provider": "content",
+  "technical_status": "accepted",
+  "governance_status": "pending_accountable_owner",
+  "reviewed_at": "2026-08-12",
+  "provider_contract_source": "ai-platform-content/contracts/openapi/content.openapi.json",
+  "provider_contract_snapshot": "contracts/providers/content/content.openapi.v1.json",
+  "provider_contract_sha256": "f625dcac47a54c2988cbf8a4ff57869265992e02af1d0b2255583843d0d36f37",
+  "consumer_test_reference": "tests/contracts/test_content_brief_contract.py",
+  "confirmed_points": [
+    "stable producer-owned source_reference",
+    "structured bounded financial domain_context",
+    "assumptions currency precision provenance and as-of representation",
+    "time sensitivity confidence and Finance review status",
+    "stable request_id and idempotency expectation",
+    "accepted response compatibility",
+    "major-version compatibility policy",
+    "no Content implementation dependency"
+  ],
+  "notes": "Executable Finance-side compatibility is accepted. An accountable Finance owner must still approve governance/release use."
+}
+

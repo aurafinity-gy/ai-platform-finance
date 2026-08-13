@@ -1,0 +1,22 @@
+{
+  "capability": "finance.create_research",
+  "contract_version": 1,
+  "consumer": "finance",
+  "provider": "finance",
+  "technical_status": "accepted",
+  "governance_status": "pending_accountable_owner",
+  "reviewed_at": "2026-08-13",
+  "provider_contract_source": "contracts/providers/finance/finance.openapi.v1.json",
+  "provider_contract_snapshot": "contracts/providers/finance/finance.openapi.v1.json",
+  "provider_contract_sha256": "b9792f0f444d9177c78ca245c2d38ecdcd04100f535706f554665d721906715b",
+  "consumer_test_reference": "tests/contracts/test_finance_research_contract.py",
+  "confirmed_points": [
+    "finance-owned research request and result contract",
+    "instrument-scoped research context with source provenance",
+    "confidence, recommendation, issues, and replay status",
+    "idempotency expectation for the future API boundary",
+    "paper-trading slice only",
+    "no peer implementation dependency"
+  ],
+  "notes": "Executable Finance-side compatibility is accepted as the target contract slice. Runtime implementation remains pending."
+}

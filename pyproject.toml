@@ -1,0 +1,51 @@
+[project]
+name = "ai-platform-finance"
+version = "0.1.0"
+description = "Finance bounded-context workspace."
+requires-python = ">=3.13,<3.14"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "httpx==0.28.1",
+  "mypy==1.17.0",
+  "jsonschema==4.25.0",
+  "pytest==8.4.1",
+  "pytest-asyncio==1.1.0",
+  "ruff==0.12.5",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = [
+  "applications/finance/domain",
+  "applications/finance/application",
+  "applications/finance/agents",
+  "applications/finance/api",
+  "applications/finance/persistence",
+  "services/api-fastapi",
+  "services/worker",
+]
+
+[tool.ruff]
+cache-dir = ".cache/ruff"
+line-length = 88
+target-version = "py313"
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers -p no:cacheprovider"
+testpaths = ["applications", "services", "tests"]
+asyncio_mode = "auto"
+
+[tool.mypy]
+cache_dir = ".cache/mypy"
+python_version = "3.13"
+strict = true
+warn_unreachable = true
+exclude = ["(^|/)(\\.venv|tests)/"]

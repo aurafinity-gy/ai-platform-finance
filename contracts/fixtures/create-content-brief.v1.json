@@ -1,0 +1,51 @@
+{
+  "contract_version": 1,
+  "request_id": "30000000-0000-0000-0000-000000000001",
+  "source_domain": "finance",
+  "source_reference": "financial-research:ABC:2026-08-12",
+  "brand_reference": "brand:aurafinity",
+  "topic": "Understanding ABC after its quarterly results",
+  "objective": "Create an educational explanation of the Finance research.",
+  "audience": "Canadian retail investors",
+  "content_type": "article",
+  "domain_context": {
+    "security_reference": "security:ABC",
+    "as_of": "2026-08-12T15:00:00Z",
+    "facts": [
+      "Revenue increased compared with the prior-year quarter."
+    ],
+    "assumptions": [
+      "All currency values are CAD unless otherwise stated."
+    ],
+    "precision": "Use values as reported; do not infer additional precision."
+  },
+  "research": [
+    {
+      "summary": "Finance-reviewed educational research package.",
+      "facts": [
+        "The calculation uses the reported diluted share count."
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "source_reference": "filing:ABC:2026-Q2",
+      "title": "ABC 2026 second-quarter filing",
+      "url": "https://example.test/filings/abc-2026-q2",
+      "as_of": "2026-08-11T21:00:00Z"
+    }
+  ],
+  "constraints": [
+    "Educational content only; do not provide personalized financial advice."
+  ],
+  "requested_channels": [
+    "article",
+    "newsletter"
+  ],
+  "time_sensitivity": "Refresh after the next earnings release.",
+  "quality_metadata": {
+    "confidence": "high",
+    "review_status": "finance-reviewed"
+  }
+}
+

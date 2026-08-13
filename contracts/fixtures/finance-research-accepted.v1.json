@@ -1,0 +1,16 @@
+{
+  "contract_version": 1,
+  "finance_research_id": "30000000-0000-0000-0000-000000000011",
+  "request_id": "30000000-0000-0000-0000-000000000010",
+  "source_domain": "finance",
+  "source_reference": "portfolio-ops/weekly-research",
+  "instrument": "AAPL",
+  "recommendation": "buy",
+  "confidence": 0.75,
+  "issues": [],
+  "correlation_id": "corr-30000000-0000-0000-0000-000000000012",
+  "created_at": "2026-08-13T15:05:00Z",
+  "replayed": false,
+  "status": "accepted"
+}
+
