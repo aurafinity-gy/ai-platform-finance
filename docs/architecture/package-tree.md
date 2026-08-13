@@ -1,15 +1,17 @@
 # Finance Package Tree
 
-Status: target architecture, 2026-08-13
+Status: implemented baseline, 2026-08-13
 
-This repository currently contains boundary documentation and one consumer
-contract slice. The tree below is the first concrete Finance implementation
-shape for a TradingAgents-style research and decision workflow.
+This repository now contains the first concrete Finance implementation shape
+for a TradingAgents-style research and decision workflow. The tree below
+reflects the checked-in workspace rather than a future target.
 
-## Target layout
+## Implemented layout
 
 ```text
 ai-platform-finance/
+  CONTRIBUTING.md
+  README.md
   applications/
     finance/
       domain/
@@ -34,26 +36,41 @@ ai-platform-finance/
         tests/
   contracts/
     acceptance/
-    consumers/
     fixtures/
     providers/
+      finance/
       content/
-      market-data/
-      news/
   docs/
     architecture/
+      cross-domain-capabilities.md
+      domain-ownership.md
+      package-tree.md
+      source-control.md
     decisions/
+      0001-content-brief-consumer.md
+      0002-finance-agent-research-slice.md
+      0003-finance-runtime-uses-postgres-and-jwt-context.md
     runbooks/
+      finance-runtime-config.md
+  infrastructure/
+    supabase/
+      migrations/
+        202608130000_platform_audit_entries.sql
+        202608130001_finance_research.sql
   services/
     api-fastapi/
+      src/
+        finance_api_service/
+      tests/
     worker/
+      src/
+        finance_worker/
+      tests/
   tests/
-    architecture/
     contracts/
-    integration/
 ```
 
-## Package responsibilities
+## Package Responsibilities
 
 `applications/finance/domain`
 : Finance-owned facts, calculations, assumptions, provenance, confidence,
@@ -74,12 +91,24 @@ ai-platform-finance/
   FastAPI handlers translate transport concerns into application calls.
 
 `applications/finance/persistence`
-: Finance-owned persistence adapters and repository implementations.
-  This layer is replaceable infrastructure behind application ports.
+: Finance-owned persistence adapters and repository implementations. This
+  layer is replaceable infrastructure behind application ports.
 
 `contracts`
-: Versioned, testable boundary contracts. Consumer fixtures and acceptance
-  evidence live here alongside pinned provider schemas.
+: Versioned, testable boundary contracts. Acceptance fixtures and provider
+schemas live here.
+
+`docs/architecture`
+: Repository architecture, ownership, and source-control guidance.
+
+`docs/decisions`
+: Decision records for the finance slice and runtime composition choices.
+
+`docs/runbooks`
+: Operational notes for local and deployed runtime configuration.
+
+`infrastructure/supabase/migrations`
+: Additive SQL migrations for the Finance schema and command replay tables.
 
 `services/api-fastapi`
 : Finance HTTP composition root for public endpoints.
@@ -88,19 +117,17 @@ ai-platform-finance/
 : Finance background composition root for long-running research and approval
   workflows if the first slice needs asynchronous execution.
 
-## First vertical slice
+## Current Vertical Slice
 
-The first finance slice should implement a paper-trading research workflow:
+The current finance slice implements a paper-trading research workflow with:
 
-1. Accept a research request for one instrument or portfolio scope.
-2. Gather evidence from finance-owned provider adapters.
-3. Run specialized analyst agents for fundamental, sentiment, news, and
-   technical views.
-4. Run a debate pass that exposes bull and bear arguments.
-5. Produce a trader recommendation.
-6. Run risk and portfolio approval checks.
-7. Persist the full evidence trail and final decision.
-8. Publish a versioned result that another bounded context can consume.
+1. Request validation and transport-to-command mapping.
+2. JWT-derived request context and tenant scope.
+3. Permission checks through Finance-owned membership lookups.
+4. Idempotent command handling.
+5. Durable research record persistence.
+6. Audit writes for accepted workflow actions.
+7. A versioned accepted-response contract for downstream consumers.
 
 ## Constraints
 
@@ -109,4 +136,3 @@ The first finance slice should implement a paper-trading research workflow:
 - No peer repository internals imported into Finance.
 - No direct database access across bounded contexts.
 - No provider SDKs in the domain layer.
-
