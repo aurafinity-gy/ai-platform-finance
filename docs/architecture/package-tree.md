@@ -12,6 +12,8 @@ reflects the checked-in workspace rather than a future target.
 ai-platform-finance/
   CONTRIBUTING.md
   README.md
+  scripts/
+    finance-smoke-test.ps1
   applications/
     finance/
       domain/

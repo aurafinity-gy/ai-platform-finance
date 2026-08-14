@@ -43,6 +43,7 @@ Start with:
 - [Finance package tree](docs/architecture/package-tree.md)
 - [Finance runtime config](docs/runbooks/finance-runtime-config.md)
 - [Finance local migration validation](docs/runbooks/local-finance-migration.md)
+- [Finance smoke test](scripts/finance-smoke-test.ps1)
 - [Finance agent research ADR](docs/decisions/0002-finance-agent-research-slice.md)
 - [Content consumer decision](docs/decisions/0001-content-brief-consumer.md)
 - [Content contract acceptance](contracts/acceptance/content-brief-v1.json)
