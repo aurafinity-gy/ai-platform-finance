@@ -52,6 +52,7 @@ ai-platform-finance/
       0003-finance-runtime-uses-postgres-and-jwt-context.md
     runbooks/
       finance-runtime-config.md
+      local-finance-migration.md
   infrastructure/
     supabase/
       migrations/

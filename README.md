@@ -41,6 +41,8 @@ Start with:
 - [Finance domain ownership](docs/architecture/domain-ownership.md)
 - [Cross-domain capabilities](docs/architecture/cross-domain-capabilities.md)
 - [Finance package tree](docs/architecture/package-tree.md)
+- [Finance runtime config](docs/runbooks/finance-runtime-config.md)
+- [Finance local migration validation](docs/runbooks/local-finance-migration.md)
 - [Finance agent research ADR](docs/decisions/0002-finance-agent-research-slice.md)
 - [Content consumer decision](docs/decisions/0001-content-brief-consumer.md)
 - [Content contract acceptance](contracts/acceptance/content-brief-v1.json)
