@@ -56,3 +56,9 @@ uv run ruff format --check .
 uv run ruff check .
 uv run pytest
 ```
+
+Run the Finance smoke test:
+
+```powershell
+pwsh -File scripts/finance-smoke-test.ps1
+```

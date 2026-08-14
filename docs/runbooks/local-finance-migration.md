@@ -76,6 +76,15 @@ Also confirm that row level security is enabled:
 psql "$env:FINANCE_DATABASE_URL" -Atqc "select relname, relrowsecurity from pg_class join pg_namespace on pg_namespace.oid = pg_class.relnamespace where nspname = 'finance' and relname in ('research_records', 'command_idempotency') order by relname"
 ```
 
+## Run The Smoke Test
+
+After the migrations and optional grant, run the tiny repository smoke test
+from the finance repo root:
+
+```powershell
+pwsh -File scripts/finance-smoke-test.ps1
+```
+
 ## Optional Local Capability Grant
 
 For a synthetic test operator, grant the Finance research capability so the
