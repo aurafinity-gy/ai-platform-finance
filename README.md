@@ -48,17 +48,12 @@ Start with:
 - [Content consumer decision](docs/decisions/0001-content-brief-consumer.md)
 - [Content contract acceptance](contracts/acceptance/content-brief-v1.json)
 
-Run the repository checks:
+## Quick Checks
 
 ```powershell
 uv sync --locked
 uv run ruff format --check .
 uv run ruff check .
 uv run pytest
-```
-
-Run the Finance smoke test:
-
-```powershell
 pwsh -File scripts/finance-smoke-test.ps1
 ```
