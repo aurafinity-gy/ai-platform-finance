@@ -55,6 +55,7 @@ ai-platform-finance/
     runbooks/
       finance-runtime-config.md
       local-finance-migration.md
+      production-readiness-checklist.md
   infrastructure/
     supabase/
       migrations/
