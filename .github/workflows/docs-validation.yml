@@ -1,0 +1,17 @@
+name: docs-validation
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  release-doc-links:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate release docs
+        shell: pwsh
+        run: pwsh -File scripts/validate-release-docs.ps1
+

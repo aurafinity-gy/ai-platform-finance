@@ -51,6 +51,7 @@ Start with:
 - [Finance release operations](docs/runbooks/release-operations.md)
 - [Finance post-release verification](docs/runbooks/post-release.md)
 - [Finance deployment manifest](docs/runbooks/deployment-manifest.md)
+- [Finance production readiness audit](docs/runbooks/production-readiness-audit.md)
 - [Finance smoke test](scripts/finance-smoke-test.ps1)
 - [Shared release and deployment entry point](../ai-platform-handbook/volume-11-delivery-workflows/deployment-and-release-entry-point.md)
 - [Finance agent research ADR](docs/decisions/0002-finance-agent-research-slice.md)
