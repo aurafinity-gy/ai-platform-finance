@@ -101,6 +101,8 @@ Status: checklist, 2026-08-25
       denials.
 - [ ] Any canary window met its success criteria.
 - [ ] Any canary stop criteria were documented and reviewed.
+- [ ] [`docs/runbooks/release-operations.md`](release-operations.md) was used to
+      guide the release sequence.
 
 ## 10. Go/No-Go
 
@@ -109,4 +111,3 @@ Status: checklist, 2026-08-25
 - [ ] The release can be rolled back without ambiguity.
 - [ ] The team agrees the system is ready for the intended production exposure
       level.
-

@@ -47,6 +47,7 @@ Start with:
 - [Finance runtime config](docs/runbooks/finance-runtime-config.md)
 - [Finance local migration validation](docs/runbooks/local-finance-migration.md)
 - [Finance production readiness checklist](docs/runbooks/production-readiness-checklist.md)
+- [Finance release operations](docs/runbooks/release-operations.md)
 - [Finance smoke test](scripts/finance-smoke-test.ps1)
 - [Shared release and deployment entry point](../ai-platform-handbook/volume-11-delivery-workflows/deployment-and-release-entry-point.md)
 - [Finance agent research ADR](docs/decisions/0002-finance-agent-research-slice.md)
