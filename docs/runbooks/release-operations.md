@@ -9,6 +9,7 @@ deployment sequence. Use it alongside:
 - [`docs/runbooks/staging-validation.md`](staging-validation.md)
 - [`docs/runbooks/production-readiness-checklist.md`](production-readiness-checklist.md)
 - [`docs/runbooks/post-release.md`](post-release.md)
+- [`docs/runbooks/deployment-manifest.md`](deployment-manifest.md)
 - [`scripts/finance-smoke-test.ps1`](../../scripts/finance-smoke-test.ps1)
 
 ## Release Inputs
@@ -26,7 +27,8 @@ deployment sequence. Use it alongside:
    or digest using [`staging-validation.md`](staging-validation.md).
 2. Apply any required database migrations using the documented additive
    migration order.
-3. Deploy the Finance API runtime with the production configuration.
+3. Deploy the Finance API runtime with the production configuration using
+   [`deployment-manifest.md`](deployment-manifest.md).
 4. Verify `/livez` and `/readyz` in the target environment.
 5. Run the Finance smoke test against the deployed environment.
 6. Confirm logs, metrics, traces, and audit events look healthy.

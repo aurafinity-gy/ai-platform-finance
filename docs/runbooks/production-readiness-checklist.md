@@ -38,6 +38,9 @@ Status: checklist, 2026-08-25
 - [ ] Runtime secrets are stored in the approved secret store, not in source.
 - [ ] The deployment manifest or environment file matches
       [`docs/runbooks/finance-runtime-config.md`](finance-runtime-config.md).
+- [ ] The deployment manifest exists as
+      [`compose.release.yaml`](../../compose.release.yaml) or an equivalent
+      production-shaped overlay.
 
 ## 4. Database And Migrations
 

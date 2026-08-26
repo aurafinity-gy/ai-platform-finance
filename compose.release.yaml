@@ -1,0 +1,48 @@
+name: ai-platform-finance
+
+# Production-shaped overlay for the Finance application services.
+# Provide the release environment variables via a secure environment file or
+# deployment system before running:
+#   docker compose --env-file <release.env> -f compose.release.yaml up -d
+services:
+  finance-api:
+    image: ${FINANCE_IMAGE_REGISTRY:?}/finance-api-fastapi:${FINANCE_RELEASE_VERSION:?}
+    pull_policy: always
+    environment:
+      FINANCE_DATABASE_URL: ${FINANCE_DATABASE_URL:?}
+      FINANCE_AUTH_JWKS_URL: ${FINANCE_AUTH_JWKS_URL:?}
+      FINANCE_AUTH_ISSUER: ${FINANCE_AUTH_ISSUER:?}
+      FINANCE_AUTH_AUDIENCE: ${FINANCE_AUTH_AUDIENCE:-authenticated}
+    ports:
+      - "${FINANCE_API_BIND_ADDRESS:?}:${FINANCE_API_PORT:-8011}:8011"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8011/livez')",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+    cap_drop: ["ALL"]
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+
+  finance-worker:
+    image: ${FINANCE_IMAGE_REGISTRY:?}/finance-worker:${FINANCE_RELEASE_VERSION:?}
+    pull_policy: always
+    environment:
+      FINANCE_DATABASE_URL: ${FINANCE_DATABASE_URL:?}
+      FINANCE_AUTH_JWKS_URL: ${FINANCE_AUTH_JWKS_URL:?}
+      FINANCE_AUTH_ISSUER: ${FINANCE_AUTH_ISSUER:?}
+      FINANCE_AUTH_AUDIENCE: ${FINANCE_AUTH_AUDIENCE:-authenticated}
+    restart: unless-stopped
+    cap_drop: ["ALL"]
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+
