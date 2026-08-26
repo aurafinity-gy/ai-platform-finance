@@ -41,6 +41,7 @@ Start with:
 - [Finance domain ownership](docs/architecture/domain-ownership.md)
 - [Cross-domain capabilities](docs/architecture/cross-domain-capabilities.md)
 - [Finance package tree](docs/architecture/package-tree.md)
+- [Finance application definition](docs/architecture/application-definition.md)
 - [Application definition starter](../ai-platform-handbook/volume-03-applications/templates.md#application-definition-starter)
 - [Finance application definition example](../ai-platform-handbook/volume-03-applications/application-definition-finance-example.md)
 - [Finance runtime config](docs/runbooks/finance-runtime-config.md)
