@@ -103,6 +103,8 @@ Status: checklist, 2026-08-25
 - [ ] Any canary stop criteria were documented and reviewed.
 - [ ] [`docs/runbooks/release-operations.md`](release-operations.md) was used to
       guide the release sequence.
+- [ ] [`docs/runbooks/staging-validation.md`](staging-validation.md) passed for
+      the exact release candidate.
 
 ## 10. Go/No-Go
 
@@ -111,3 +113,5 @@ Status: checklist, 2026-08-25
 - [ ] The release can be rolled back without ambiguity.
 - [ ] The team agrees the system is ready for the intended production exposure
       level.
+- [ ] [`docs/runbooks/post-release.md`](post-release.md) is ready for the
+      promotion window.

@@ -6,7 +6,9 @@ deployment sequence. Use it alongside:
 - [`ai-platform-handbook/volume-11-delivery-workflows/deployment-and-release-entry-point.md`](../../ai-platform-handbook/volume-11-delivery-workflows/deployment-and-release-entry-point.md)
 - [`docs/runbooks/finance-runtime-config.md`](finance-runtime-config.md)
 - [`docs/runbooks/local-finance-migration.md`](local-finance-migration.md)
+- [`docs/runbooks/staging-validation.md`](staging-validation.md)
 - [`docs/runbooks/production-readiness-checklist.md`](production-readiness-checklist.md)
+- [`docs/runbooks/post-release.md`](post-release.md)
 - [`scripts/finance-smoke-test.ps1`](../../scripts/finance-smoke-test.ps1)
 
 ## Release Inputs
@@ -21,7 +23,7 @@ deployment sequence. Use it alongside:
 ## Deployment Order
 
 1. Validate the release candidate in staging with the exact production image
-   or digest.
+   or digest using [`staging-validation.md`](staging-validation.md).
 2. Apply any required database migrations using the documented additive
    migration order.
 3. Deploy the Finance API runtime with the production configuration.
@@ -30,6 +32,7 @@ deployment sequence. Use it alongside:
 6. Confirm logs, metrics, traces, and audit events look healthy.
 7. Promote the same artifact to the production environment when staging is
    stable and approved.
+8. Verify the promotion with [`post-release.md`](post-release.md).
 
 ## Required Checks Before Promotion
 
