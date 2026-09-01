@@ -4,14 +4,16 @@ from datetime import datetime
 from typing import Annotated, Any, Literal, Protocol, cast
 from uuid import UUID
 
+from fastapi import APIRouter, Depends, Header, Request, status
 from finance_application import (
     CreateFinanceResearch,
     CreateFinanceResearchHandler,
+    EnqueueFinanceResearchHandler,
     FinanceResearchAcceptedResult,
+    FinanceResearchQueuedResult,
     RequestContext,
 )
 from finance_domain import ResearchMaterial, SourceMaterial
-from fastapi import APIRouter, Depends, Header, Request, status
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
 router = APIRouter(prefix="/v1/finance-researches", tags=["Finance"])
@@ -36,6 +38,7 @@ class RequestContextProvider(Protocol):
 @dataclass(frozen=True, slots=True)
 class FinanceResearchHandlers:
     create: CreateFinanceResearchHandler
+    enqueue: EnqueueFinanceResearchHandler | None = None
 
 
 class HeaderRequestContextProvider:
@@ -172,6 +175,26 @@ class FinanceResearchAcceptedResponse(BaseModel):
         )
 
 
+class FinanceResearchQueuedResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    job_id: UUID
+    request_id: UUID
+    correlation_id: str
+    status: Literal["queued"]
+
+    @classmethod
+    def from_result(
+        cls, result: FinanceResearchQueuedResult
+    ) -> "FinanceResearchQueuedResponse":
+        return cls(
+            job_id=result.job_id,
+            request_id=result.request_id,
+            correlation_id=result.correlation_id,
+            status="queued",
+        )
+
+
 class ProblemDetails(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -226,6 +249,29 @@ async def create_finance_research(
         body.to_command(idempotency_key), context
     )
     return FinanceResearchAcceptedResponse.from_result(result)
+
+
+@router.post(
+    "/jobs",
+    operation_id="enqueueFinanceResearch",
+    response_model=FinanceResearchQueuedResponse,
+    status_code=status.HTTP_202_ACCEPTED,
+)
+async def enqueue_finance_research(
+    body: CreateFinanceResearchRequest,
+    context: Annotated[RequestContext, Depends(request_context)],
+    finance_handlers: Annotated[FinanceResearchHandlers, Depends(handlers)],
+    idempotency_key: Annotated[
+        str,
+        Header(alias="Idempotency-Key", min_length=1, max_length=200),
+    ],
+) -> FinanceResearchQueuedResponse:
+    if finance_handlers.enqueue is None:
+        raise ApiUnavailableError("Finance job queue is unavailable.")
+    result = await finance_handlers.enqueue.execute(
+        body.to_command(idempotency_key), context
+    )
+    return FinanceResearchQueuedResponse.from_result(result)
 
 
 @router.get("/livez", include_in_schema=False)

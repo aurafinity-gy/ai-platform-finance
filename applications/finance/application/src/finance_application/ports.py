@@ -3,6 +3,8 @@ from datetime import datetime
 from typing import Protocol, Self
 from uuid import UUID
 
+from finance_domain import JsonValue
+
 
 @dataclass(frozen=True, slots=True)
 class RequestContext:
@@ -71,6 +73,26 @@ class FinanceResearchRecord:
     contract_version: int
 
 
+@dataclass(frozen=True, slots=True)
+class FinanceResearchJob:
+    job_id: UUID
+    tenant_id: UUID
+    actor_id: UUID
+    request_id: UUID
+    payload: dict[str, JsonValue]
+    attempts: int = 0
+
+
+class FinanceResearchJobRepository(Protocol):
+    async def enqueue(self, job: FinanceResearchJob) -> FinanceResearchJob: ...
+
+    async def claim(self, *, worker_id: str) -> FinanceResearchJob | None: ...
+
+    async def complete(self, *, job_id: UUID) -> None: ...
+
+    async def fail(self, *, job_id: UUID, error: str, retry_at: datetime) -> None: ...
+
+
 class MembershipRepository(Protocol):
     async def has_permission(
         self,
@@ -100,6 +122,7 @@ class FinanceUnitOfWork(Protocol):
     memberships: MembershipRepository
     idempotency: IdempotencyRepository
     audit: AuditRepository
+    jobs: FinanceResearchJobRepository
 
     async def __aenter__(self) -> Self: ...
 

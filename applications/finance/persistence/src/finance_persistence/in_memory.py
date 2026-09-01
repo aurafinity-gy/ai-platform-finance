@@ -5,9 +5,9 @@ from uuid import UUID
 from finance_application import (
     AuditEntry,
     CommandScope,
+    FinanceResearchJob,
     FinanceResearchRecord,
     FinanceUnitOfWork,
-    FinanceUnitOfWorkFactory,
     RequestContext,
     StoredCommandResult,
 )
@@ -21,6 +21,28 @@ class InMemoryFinanceState:
     )
     research_records: list[FinanceResearchRecord] = field(default_factory=list)
     audit_entries: list[AuditEntry] = field(default_factory=list)
+    jobs: list[FinanceResearchJob] = field(default_factory=list)
+
+
+class InMemoryFinanceJobRepository:
+    def __init__(self, state: InMemoryFinanceState) -> None:
+        self._state = state
+
+    async def enqueue(self, job: FinanceResearchJob) -> FinanceResearchJob:
+        self._state.jobs.append(job)
+        return job
+
+    async def claim(self, *, worker_id: str) -> FinanceResearchJob | None:
+        del worker_id
+        if not self._state.jobs:
+            return None
+        return self._state.jobs.pop(0)
+
+    async def complete(self, *, job_id: UUID) -> None:
+        del job_id
+
+    async def fail(self, *, job_id: UUID, error: str, retry_at: datetime) -> None:
+        del job_id, error, retry_at
 
 
 class InMemoryFinanceMembershipRepository:
@@ -85,6 +107,7 @@ class InMemoryFinanceUnitOfWork:
         self.memberships = InMemoryFinanceMembershipRepository(state)
         self.idempotency = InMemoryFinanceIdempotencyRepository(state)
         self.audit = InMemoryFinanceAuditRepository(state)
+        self.jobs = InMemoryFinanceJobRepository(state)
 
     async def __aenter__(self) -> "InMemoryFinanceUnitOfWork":
         return self

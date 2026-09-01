@@ -1,13 +1,14 @@
 import json
+from datetime import datetime
 from typing import Any
 from uuid import UUID
 
 from finance_application import (
     AuditEntry,
     CommandScope,
+    FinanceResearchJob,
     FinanceResearchRecord,
     FinanceUnitOfWork,
-    FinanceUnitOfWorkFactory,
     RequestContext,
     StoredCommandResult,
 )
@@ -174,11 +175,99 @@ class PostgresFinanceAuditRepository:
         )
 
 
+class PostgresFinanceJobRepository:
+    def __init__(self, connection: AsyncConnection[Any]) -> None:
+        self._connection = connection
+
+    async def enqueue(self, job: FinanceResearchJob) -> FinanceResearchJob:
+        cursor = await self._connection.execute(
+            """
+            insert into finance.research_jobs (
+                id, tenant_id, actor_id, request_id, operation, payload
+            ) values (%s, %s, %s, %s, 'finance.research.create', %s)
+            on conflict (tenant_id, request_id, operation) do update
+                set payload = finance.research_jobs.payload
+            returning id, tenant_id, actor_id, request_id, payload, attempts
+            """,
+            (
+                job.job_id,
+                job.tenant_id,
+                job.actor_id,
+                job.request_id,
+                Jsonb(job.payload),
+            ),
+        )
+        row = await cursor.fetchone()
+        return FinanceResearchJob(
+            job_id=row["id"],
+            tenant_id=row["tenant_id"],
+            actor_id=row["actor_id"],
+            request_id=row["request_id"],
+            payload=row["payload"],
+            attempts=row["attempts"],
+        )
+
+    async def claim(self, *, worker_id: str) -> FinanceResearchJob | None:
+        cursor = await self._connection.execute(
+            """
+            with candidate as (
+                select id
+                from finance.research_jobs
+                where status = 'queued' and available_at <= now()
+                order by created_at, id
+                for update skip locked
+                limit 1
+            )
+            update finance.research_jobs job
+            set status = 'processing', attempts = job.attempts + 1,
+                locked_at = now(), locked_by = %s
+            from candidate
+            where job.id = candidate.id
+            returning job.id, job.tenant_id, job.actor_id, job.request_id,
+                      job.payload, job.attempts
+            """,
+            (worker_id,),
+        )
+        row = await cursor.fetchone()
+        if row is None:
+            return None
+        return FinanceResearchJob(
+            job_id=row["id"],
+            tenant_id=row["tenant_id"],
+            actor_id=row["actor_id"],
+            request_id=row["request_id"],
+            payload=row["payload"],
+            attempts=row["attempts"],
+        )
+
+    async def complete(self, *, job_id: UUID) -> None:
+        await self._connection.execute(
+            """
+            update finance.research_jobs
+            set status = 'succeeded', completed_at = now()
+            where id = %s and status = 'processing'
+            """,
+            (job_id,),
+        )
+
+    async def fail(self, *, job_id: UUID, error: str, retry_at: datetime) -> None:
+        await self._connection.execute(
+            """
+            update finance.research_jobs
+            set status = 'queued', available_at = %s, last_error = %s,
+                locked_at = null, locked_by = null
+            where id = %s and status = 'processing'
+            """,
+            (retry_at, error[:2_000], job_id),
+        )
+
+
 class PostgresFinanceUnitOfWork:
     researches: FinanceResearchRepository
     memberships: MembershipRepository
     idempotency: IdempotencyRepository
     audit: AuditRepository
+    jobs: PostgresFinanceJobRepository
 
     def __init__(
         self,
@@ -217,6 +306,7 @@ class PostgresFinanceUnitOfWork:
         self.memberships = PostgresFinanceMembershipRepository(connection)
         self.idempotency = PostgresFinanceIdempotencyRepository(connection)
         self.audit = PostgresFinanceAuditRepository(connection)
+        self.jobs = PostgresFinanceJobRepository(connection)
         return self
 
     async def __aexit__(

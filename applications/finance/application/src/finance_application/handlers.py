@@ -4,6 +4,13 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from uuid import UUID
 
+from finance_domain import (
+    FinanceResearchResult,
+    JsonValue,
+    ResearchMaterial,
+    SourceMaterial,
+)
+
 from finance_application.errors import (
     IdempotencyConflictError,
     InvalidIdempotencyKeyError,
@@ -13,8 +20,9 @@ from finance_application.ports import (
     AuditEntry,
     Clock,
     CommandScope,
-    FinanceUnitOfWorkFactory,
+    FinanceResearchJob,
     FinanceResearchRecord,
+    FinanceUnitOfWorkFactory,
     IdGenerator,
     RequestContext,
     StoredCommandResult,
@@ -24,7 +32,6 @@ from finance_application.workflow import (
     FinanceResearchCommand,
     FinanceResearchWorkflow,
 )
-from finance_domain import FinanceResearchResult, JsonValue, ResearchMaterial, SourceMaterial
 
 FINANCE_RESEARCH_CREATE_PERMISSION = "finance.research.create"
 _OPERATION = "finance.research.create"
@@ -101,6 +108,54 @@ class FinanceResearchAcceptedResult:
             status=result.status.value,
             contract_version=result.contract_version,
         )
+
+
+@dataclass(frozen=True, slots=True)
+class FinanceResearchQueuedResult:
+    job_id: UUID
+    request_id: UUID
+    correlation_id: str
+    status: str = "queued"
+
+
+class EnqueueFinanceResearchHandler:
+    def __init__(
+        self,
+        *,
+        clock: Clock,
+        id_generator: IdGenerator,
+        uow_factory: FinanceUnitOfWorkFactory,
+    ) -> None:
+        self._clock = clock
+        self._id_generator = id_generator
+        self._uow_factory = uow_factory
+
+    async def execute(
+        self, command: CreateFinanceResearch, context: RequestContext
+    ) -> FinanceResearchQueuedResult:
+        if command.contract_version != 1:
+            raise ValueError("Unsupported Finance research contract version.")
+        async with self._uow_factory.create(context) as uow:
+            if not await uow.memberships.has_permission(
+                actor_id=context.actor_id,
+                tenant_id=context.tenant_id,
+                permission=FINANCE_RESEARCH_CREATE_PERMISSION,
+            ):
+                raise PermissionDeniedError("Finance research creation is not allowed.")
+            job = await uow.jobs.enqueue(
+                FinanceResearchJob(
+                    job_id=self._id_generator.new_uuid(),
+                    tenant_id=context.tenant_id,
+                    actor_id=context.actor_id,
+                    request_id=command.request_id,
+                    payload=_command_payload(command),
+                )
+            )
+            return FinanceResearchQueuedResult(
+                job_id=job.job_id,
+                request_id=job.request_id,
+                correlation_id=context.correlation_id,
+            )
 
 
 class CreateFinanceResearchHandler:
@@ -251,9 +306,16 @@ def _command_scope(context: RequestContext, raw_key: str) -> CommandScope:
 
 
 def _fingerprint(command: CreateFinanceResearch) -> str:
-    payload = {
+    serialized = json.dumps(
+        _command_payload(command), sort_keys=True, separators=(",", ":")
+    )
+    return hashlib.sha256(serialized.encode()).hexdigest()
+
+
+def _command_payload(command: CreateFinanceResearch) -> dict[str, object]:
+    return {
         "operation": _OPERATION,
-        "version": 1,
+        "contract_version": command.contract_version,
         "request_id": str(command.request_id),
         "source_domain": command.source_domain,
         "source_reference": command.source_reference,
@@ -277,8 +339,6 @@ def _fingerprint(command: CreateFinanceResearch) -> str:
         "constraints": command.constraints,
         "quality_metadata": command.quality_metadata,
     }
-    serialized = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(serialized.encode()).hexdigest()
 
 
 def _replay_result(
