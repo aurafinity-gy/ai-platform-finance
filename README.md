@@ -44,6 +44,7 @@ Start with:
 - [Finance package tree](docs/architecture/package-tree.md)
 - [Finance research job queue](docs/architecture/research-job-queue.md)
 - [Finance application definition](docs/architecture/application-definition.md)
+- [Finance MVP application acceptance](docs/runbooks/mvp-application-acceptance.md)
 - [Application definition starter](../ai-platform-handbook/volume-03-applications/templates.md#application-definition-starter)
 - [Finance application definition example](../ai-platform-handbook/volume-03-applications/application-definition-finance-example.md)
 - [Finance runtime config](docs/runbooks/finance-runtime-config.md)
