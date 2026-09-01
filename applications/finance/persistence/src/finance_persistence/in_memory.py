@@ -6,6 +6,7 @@ from finance_application import (
     AuditEntry,
     CommandScope,
     FinanceResearchJob,
+    FinanceResearchJobStatus,
     FinanceResearchRecord,
     FinanceUnitOfWork,
     RequestContext,
@@ -31,6 +32,10 @@ class InMemoryFinanceJobRepository:
     async def enqueue(self, job: FinanceResearchJob) -> FinanceResearchJob:
         self._state.jobs.append(job)
         return job
+
+    async def get(self, *, job_id: UUID) -> FinanceResearchJobStatus | None:
+        del job_id
+        return None
 
     async def claim(self, *, worker_id: str) -> FinanceResearchJob | None:
         del worker_id

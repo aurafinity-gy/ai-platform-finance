@@ -83,8 +83,21 @@ class FinanceResearchJob:
     attempts: int = 0
 
 
+@dataclass(frozen=True, slots=True)
+class FinanceResearchJobStatus:
+    job_id: UUID
+    request_id: UUID
+    status: str
+    finance_research_id: UUID | None = None
+    recommendation: str | None = None
+    confidence: float | None = None
+    error: str | None = None
+
+
 class FinanceResearchJobRepository(Protocol):
     async def enqueue(self, job: FinanceResearchJob) -> FinanceResearchJob: ...
+
+    async def get(self, *, job_id: UUID) -> FinanceResearchJobStatus | None: ...
 
     async def claim(self, *, worker_id: str) -> FinanceResearchJob | None: ...
 

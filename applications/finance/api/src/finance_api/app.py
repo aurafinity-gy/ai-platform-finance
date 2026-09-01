@@ -56,6 +56,7 @@ def create_app(
         app.state.finance_handlers = FinanceResearchHandlers(
             create=create_handler,
             enqueue=enqueue_handler,
+            uow_factory=uow_factory,
         )
     else:
         app.state.finance_handlers = handlers

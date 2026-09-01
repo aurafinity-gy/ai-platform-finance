@@ -11,6 +11,7 @@ from finance_application import (
     EnqueueFinanceResearchHandler,
     FinanceResearchAcceptedResult,
     FinanceResearchQueuedResult,
+    FinanceUnitOfWorkFactory,
     RequestContext,
 )
 from finance_domain import ResearchMaterial, SourceMaterial
@@ -39,6 +40,7 @@ class RequestContextProvider(Protocol):
 class FinanceResearchHandlers:
     create: CreateFinanceResearchHandler
     enqueue: EnqueueFinanceResearchHandler | None = None
+    uow_factory: FinanceUnitOfWorkFactory | None = None
 
 
 class HeaderRequestContextProvider:
@@ -195,6 +197,18 @@ class FinanceResearchQueuedResponse(BaseModel):
         )
 
 
+class FinanceResearchJobStatusResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    job_id: UUID
+    request_id: UUID
+    status: Literal["queued", "processing", "succeeded", "failed"]
+    finance_research_id: UUID | None = None
+    recommendation: str | None = None
+    confidence: float | None = None
+    error: str | None = None
+
+
 class ProblemDetails(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -272,6 +286,40 @@ async def enqueue_finance_research(
         body.to_command(idempotency_key), context
     )
     return FinanceResearchQueuedResponse.from_result(result)
+
+
+@router.get(
+    "/jobs/{job_id}",
+    operation_id="getFinanceResearchJob",
+    response_model=FinanceResearchJobStatusResponse,
+    responses={401: {"model": ProblemDetails}, 403: {"model": ProblemDetails}},
+)
+async def get_finance_research_job(
+    job_id: UUID,
+    context: Annotated[RequestContext, Depends(request_context)],
+    finance_handlers: Annotated[FinanceResearchHandlers, Depends(handlers)],
+) -> FinanceResearchJobStatusResponse:
+    if finance_handlers.uow_factory is None:
+        raise ApiUnavailableError("Finance job queue is unavailable.")
+    async with finance_handlers.uow_factory.create(context) as uow:
+        if not await uow.memberships.has_permission(
+            actor_id=context.actor_id,
+            tenant_id=context.tenant_id,
+            permission=FINANCE_RESEARCH_CREATE_PERMISSION,
+        ):
+            raise PermissionDeniedError("Finance research access is not allowed.")
+        job = await uow.jobs.get(job_id=job_id)
+    if job is None:
+        raise ApiUnavailableError("Finance research job was not found.")
+    return FinanceResearchJobStatusResponse(
+        job_id=job.job_id,
+        request_id=job.request_id,
+        status=job.status,
+        finance_research_id=job.finance_research_id,
+        recommendation=job.recommendation,
+        confidence=job.confidence,
+        error=job.error,
+    )
 
 
 @router.get("/livez", include_in_schema=False)

@@ -7,6 +7,7 @@ from finance_application import (
     AuditEntry,
     CommandScope,
     FinanceResearchJob,
+    FinanceResearchJobStatus,
     FinanceResearchRecord,
     FinanceUnitOfWork,
     RequestContext,
@@ -205,6 +206,33 @@ class PostgresFinanceJobRepository:
             request_id=row["request_id"],
             payload=row["payload"],
             attempts=row["attempts"],
+        )
+
+    async def get(self, *, job_id: UUID) -> FinanceResearchJobStatus | None:
+        cursor = await self._connection.execute(
+            """
+            select jobs.id, jobs.request_id, jobs.status, jobs.last_error,
+                   records.id as finance_research_id, records.recommendation,
+                   records.confidence
+            from finance.research_jobs jobs
+            left join finance.research_records records
+              on records.request_id = jobs.request_id
+             and records.tenant_id = jobs.tenant_id
+            where jobs.id = %s
+            """,
+            (job_id,),
+        )
+        row = await cursor.fetchone()
+        if row is None:
+            return None
+        return FinanceResearchJobStatus(
+            job_id=row["id"],
+            request_id=row["request_id"],
+            status=row["status"],
+            finance_research_id=row["finance_research_id"],
+            recommendation=row["recommendation"],
+            confidence=row["confidence"],
+            error=row["last_error"],
         )
 
     async def claim(self, *, worker_id: str) -> FinanceResearchJob | None:
