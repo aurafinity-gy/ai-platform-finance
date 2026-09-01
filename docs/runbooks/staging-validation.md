@@ -60,3 +60,19 @@ production-shaped environment before promotion.
 - Auth and tenant checks pass.
 - No unexpected schema, logging, or rollout issues appear.
 - The release is approved for promotion or explicitly stopped.
+
+## Automated Run
+
+With staging credentials and a staging bearer token available, run:
+
+```powershell
+pwsh -File scripts/finance-staging-validation.ps1 `
+  -DatabaseUrl $env:FINANCE_DATABASE_URL `
+  -ApiBaseUrl $env:FINANCE_STAGING_API_URL `
+  -BearerToken $env:FINANCE_STAGING_BEARER_TOKEN `
+  -TenantId $env:FINANCE_STAGING_TENANT_ID `
+  -ApplyMigrations
+```
+
+Omit `-ApplyMigrations` when migrations are managed by the deployment
+controller and only runtime validation is required.

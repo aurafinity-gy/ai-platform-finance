@@ -55,6 +55,7 @@ Start with:
 - [Finance deployment manifest](docs/runbooks/deployment-manifest.md)
 - [Finance production readiness audit](docs/runbooks/production-readiness-audit.md)
 - [Finance smoke test](scripts/finance-smoke-test.ps1)
+- [Finance staging validation script](scripts/finance-staging-validation.ps1)
 - [Shared release and deployment entry point](../ai-platform-handbook/volume-11-delivery-workflows/deployment-and-release-entry-point.md)
 - [Finance agent research ADR](docs/decisions/0002-finance-agent-research-slice.md)
 - [Content consumer decision](docs/decisions/0001-content-brief-consumer.md)
