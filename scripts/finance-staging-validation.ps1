@@ -18,7 +18,9 @@ if ($ApplyMigrations) {
         '202608130000_platform_audit_entries.sql',
         '202608130001_finance_research.sql',
         '202608310002_finance_research_jobs.sql',
-        '202608310003_finance_research_worker_claim.sql'
+        '202608310003_finance_research_worker_claim.sql',
+        '202609010000_finance_research_policy_fix.sql',
+        '202609010001_finance_research_read_policy.sql'
     )
     foreach ($migration in $migrationPaths) {
         $path = Join-Path $repositoryRoot "infrastructure/supabase/migrations/$migration"

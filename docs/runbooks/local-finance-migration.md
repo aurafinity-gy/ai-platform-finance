@@ -22,6 +22,8 @@ migration:
 2. `infrastructure/supabase/migrations/202608130001_finance_research.sql`
 3. `infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql`
 4. `infrastructure/supabase/migrations/202608310003_finance_research_worker_claim.sql`
+5. `infrastructure/supabase/migrations/202609010000_finance_research_policy_fix.sql`
+6. `infrastructure/supabase/migrations/202609010001_finance_research_read_policy.sql`
 
 That order matters because the Finance migration depends on the shared audit
 table.
@@ -55,6 +57,7 @@ psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/m
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608310003_finance_research_worker_claim.sql
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202609010000_finance_research_policy_fix.sql
+psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202609010001_finance_research_read_policy.sql
 ```
 
 If you are applying to a containerized database instead of a direct URL,
