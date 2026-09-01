@@ -14,6 +14,8 @@ production-shaped environment before promotion.
 
 - Confirm the staging environment uses the Finance production runtime
   configuration.
+- Confirm `FINANCE_API_BIND_ADDRESS` is set to the intended private or public
+  interface for the staging topology.
 - Confirm `FINANCE_DATABASE_URL`, `FINANCE_AUTH_JWKS_URL`, and
   `FINANCE_AUTH_ISSUER` are populated.
 - Confirm any optional `FINANCE_AUTH_AUDIENCE` override matches the intended

@@ -14,6 +14,7 @@ $requiredPaths = @(
     'docs/runbooks/production-readiness-audit.md',
     'docs/runbooks/production-readiness-checklist.md'
     'docs/architecture/research-job-queue.md'
+    'scripts/finance-smoke-test.ps1'
 )
 
 foreach ($relative in $requiredPaths) {
@@ -34,6 +35,7 @@ $requiredLinks = @(
     'docs/runbooks/deployment-manifest.md',
     'docs/runbooks/production-readiness-audit.md'
     'docs/architecture/research-job-queue.md'
+    'scripts/finance-smoke-test.ps1'
 )
 
 foreach ($link in $requiredLinks) {

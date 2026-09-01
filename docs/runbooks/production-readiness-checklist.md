@@ -31,6 +31,7 @@ Status: checklist, 2026-08-25
 
 ## 3. Runtime Configuration
 
+- [ ] `FINANCE_API_BIND_ADDRESS` is set for the target network topology.
 - [ ] `FINANCE_DATABASE_URL` is defined for the target environment.
 - [ ] `FINANCE_AUTH_JWKS_URL` is defined for the target environment.
 - [ ] `FINANCE_AUTH_ISSUER` is defined for the target environment.

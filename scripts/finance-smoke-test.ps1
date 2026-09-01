@@ -31,6 +31,6 @@ Assert-TableExists 'platform.memberships'
 Assert-TableExists 'platform.audit_entries'
 Assert-TableExists 'finance.research_records'
 Assert-TableExists 'finance.command_idempotency'
+Assert-TableExists 'finance.research_jobs'
 
 Write-Host 'Finance smoke test passed.'
-

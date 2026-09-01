@@ -7,6 +7,10 @@ identity settings described below.
 
 ## Required Environment Variables
 
+- `FINANCE_API_BIND_ADDRESS`
+  - Host bind address for the API deployment, such as `0.0.0.0` or a private
+    interface address.
+
 - `FINANCE_DATABASE_URL`
   - Postgres connection string for the Finance unit of work.
   - Example: `postgresql://platform_api:secret@localhost:5432/postgres`
