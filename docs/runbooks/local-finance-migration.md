@@ -54,6 +54,7 @@ psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/m
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608130001_finance_research.sql
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608310003_finance_research_worker_claim.sql
+psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202609010000_finance_research_policy_fix.sql
 ```
 
 If you are applying to a containerized database instead of a direct URL,
