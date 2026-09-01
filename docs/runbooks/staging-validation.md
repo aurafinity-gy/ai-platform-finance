@@ -29,6 +29,8 @@ production-shaped environment before promotion.
 - Confirm `finance.research_records` exists.
 - Confirm `finance.command_idempotency` exists.
 - Confirm row-level security is enabled on Finance-owned tables.
+- If asynchronous research is enabled, confirm `finance.research_jobs` exists
+  and exercise claim, retry, and lease-expiry behavior.
 
 ## Runtime Validation
 
@@ -55,4 +57,3 @@ production-shaped environment before promotion.
 - Auth and tenant checks pass.
 - No unexpected schema, logging, or rollout issues appear.
 - The release is approved for promotion or explicitly stopped.
-

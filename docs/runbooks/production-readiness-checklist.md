@@ -74,6 +74,8 @@ Status: checklist, 2026-08-25
 - [ ] If the worker is deployed, `FINANCE_WORKER_ACTOR_ID` and
       `FINANCE_WORKER_TENANT_ID` identify a provisioned least-privilege service
       membership.
+- [ ] If asynchronous research is enabled, the durable research-job queue has
+      claim, lease, retry, and dead-letter behavior validated in staging.
 - [ ] No local-only bootstrap path is required in production.
 - [ ] The release image is immutable and referenced by digest or locked tag.
 

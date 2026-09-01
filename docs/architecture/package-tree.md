@@ -48,6 +48,7 @@ ai-platform-finance/
       cross-domain-capabilities.md
       domain-ownership.md
       package-tree.md
+      research-job-queue.md
       source-control.md
     decisions/
       0001-content-brief-consumer.md
@@ -62,6 +63,7 @@ ai-platform-finance/
       migrations/
         202608130000_platform_audit_entries.sql
         202608130001_finance_research.sql
+        202608310002_finance_research_jobs.sql
   services/
     api-fastapi/
       src/

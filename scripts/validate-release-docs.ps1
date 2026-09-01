@@ -13,6 +13,7 @@ $requiredPaths = @(
     'docs/runbooks/deployment-manifest.md',
     'docs/runbooks/production-readiness-audit.md',
     'docs/runbooks/production-readiness-checklist.md'
+    'docs/architecture/research-job-queue.md'
 )
 
 foreach ($relative in $requiredPaths) {
@@ -32,6 +33,7 @@ $requiredLinks = @(
     'docs/runbooks/post-release.md',
     'docs/runbooks/deployment-manifest.md',
     'docs/runbooks/production-readiness-audit.md'
+    'docs/architecture/research-job-queue.md'
 )
 
 foreach ($link in $requiredLinks) {
@@ -41,4 +43,3 @@ foreach ($link in $requiredLinks) {
 }
 
 Write-Host 'Finance release-doc validation passed.'
-

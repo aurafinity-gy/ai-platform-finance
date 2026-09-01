@@ -20,6 +20,7 @@ migration:
 
 1. `infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql`
 2. `infrastructure/supabase/migrations/202608130001_finance_research.sql`
+3. `infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql`
 
 That order matters because the Finance migration depends on the shared audit
 table.
@@ -50,6 +51,7 @@ database you want to update.
 ```powershell
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608130001_finance_research.sql
+psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql
 ```
 
 If you are applying to a containerized database instead of a direct URL,
@@ -61,19 +63,19 @@ there.
 Check that the Finance tables now exist:
 
 ```powershell
-psql "$env:FINANCE_DATABASE_URL" -Atqc "select to_regclass('finance.research_records'), to_regclass('finance.command_idempotency')"
+psql "$env:FINANCE_DATABASE_URL" -Atqc "select to_regclass('finance.research_records'), to_regclass('finance.command_idempotency'), to_regclass('finance.research_jobs')"
 ```
 
 Expected output:
 
 ```text
-finance.research_records|finance.command_idempotency
+finance.research_records|finance.command_idempotency|finance.research_jobs
 ```
 
 Also confirm that row level security is enabled:
 
 ```powershell
-psql "$env:FINANCE_DATABASE_URL" -Atqc "select relname, relrowsecurity from pg_class join pg_namespace on pg_namespace.oid = pg_class.relnamespace where nspname = 'finance' and relname in ('research_records', 'command_idempotency') order by relname"
+psql "$env:FINANCE_DATABASE_URL" -Atqc "select relname, relrowsecurity from pg_class join pg_namespace on pg_namespace.oid = pg_class.relnamespace where nspname = 'finance' and relname in ('research_records', 'command_idempotency', 'research_jobs') order by relname"
 ```
 
 ## Run The Smoke Test
@@ -100,3 +102,4 @@ psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -c "update platform.membersh
 - [`docs/decisions/0003-finance-runtime-uses-postgres-and-jwt-context.md`](../decisions/0003-finance-runtime-uses-postgres-and-jwt-context.md)
 - [`infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql`](../../infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql)
 - [`infrastructure/supabase/migrations/202608130001_finance_research.sql`](../../infrastructure/supabase/migrations/202608130001_finance_research.sql)
+- [`infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql`](../../infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql)
