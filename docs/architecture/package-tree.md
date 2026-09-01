@@ -27,6 +27,7 @@ ai-platform-finance/
       agents/
         src/
           finance_agents/
+            roles.py
         tests/
       api/
         src/
@@ -87,8 +88,9 @@ ai-platform-finance/
   provider SDKs or transport code.
 
 `applications/finance/agents`
-: Finance-specific agent definitions, prompts, tool contracts, debate rules,
-  and memory schemas. Generic agent execution remains in Foundation.
+: Finance-specific role definitions, typed assessments, prompts, tool
+  contracts, debate rules, and memory schemas. Generic agent execution remains
+  in Foundation.
 
 `applications/finance/api`
 : Finance HTTP contract surface for commands, queries, and workflow actions.
@@ -130,12 +132,19 @@ The current finance slice implements a paper-trading research workflow with:
 3. Permission checks through Finance-owned membership lookups.
 4. Idempotent command handling.
 5. Durable research record persistence.
+
+The deterministic first workflow currently evaluates fundamental, sentiment,
+news, and technical views, followed by bull/bear synthesis. These are the
+initial Finance-owned role behaviors; the `agents` package remains the home for
+extracting them into explicit agent definitions backed by Foundation's runtime.
 6. Audit writes for accepted workflow actions.
 7. A versioned accepted-response contract for downstream consumers.
 
 ## Constraints
 
 - No live order execution in the first slice.
+- The worker's production entry point requires Postgres and a provisioned
+  service identity; in-memory persistence is test-only.
 - No generic agent runtime in Finance.
 - No peer repository internals imported into Finance.
 - No direct database access across bounded contexts.

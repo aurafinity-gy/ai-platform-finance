@@ -1,18 +1,17 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from uuid import UUID
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, status
+from finance_api import create_app
+from finance_persistence import PostgresFinanceUnitOfWorkFactory
 from psycopg_pool import AsyncConnectionPool
 
-from finance_api import create_app
 from finance_api_service.auth import (
     HttpJwkProvider,
     JwtRequestContextProvider,
     JwtVerifier,
 )
 from finance_api_service.settings import RuntimeSettings
-from finance_persistence import PostgresFinanceUnitOfWorkFactory
 
 
 def create_runtime_app(
@@ -72,7 +71,10 @@ def create_runtime_app(
             async with pool.connection() as connection:
                 await connection.execute("select 1")
         except Exception:
-            return {"status": "unavailable"}
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Finance database is unavailable.",
+            ) from None
         return {"status": "ready"}
 
     return app

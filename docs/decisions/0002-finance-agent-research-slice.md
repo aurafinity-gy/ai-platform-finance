@@ -92,3 +92,7 @@ The first Finance slice will support:
 3. Add an API service and worker composition root for the workflow.
 4. Add tests for tenant isolation, approval policy, and contract stability.
 
+The first role vocabulary is now explicit in `applications/finance/agents`.
+Provider-backed execution and Foundation runtime integration remain follow-up
+work; the current workflow uses deterministic role behavior for safe paper
+trading evaluation.

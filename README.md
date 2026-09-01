@@ -31,9 +31,10 @@ Future capabilities:
 - A TradingAgents-style research and decision pipeline with explicit analyst,
   debate, trader, risk, and portfolio stages.
 
-The initial slice establishes the repository boundary and independently tests
-Finance's use of Content's `content.create_brief` v1 contract. No financial
-research implementation or provider integration is implied yet.
+The initial slice now includes a deterministic paper-trading research workflow
+and durable Finance persistence. External market-data providers, Foundation
+agent-runtime integration, human approval, and live execution remain future
+capabilities.
 
 Start with:
 

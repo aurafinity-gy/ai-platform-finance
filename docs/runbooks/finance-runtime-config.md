@@ -2,7 +2,8 @@
 
 This runbook documents the environment required by the Finance API runtime.
 It applies to `services/api-fastapi` and any deployed composition root that
-builds the runtime without injected test doubles.
+builds the runtime without injected test doubles. The worker has separate
+identity settings described below.
 
 ## Required Environment Variables
 
@@ -21,6 +22,19 @@ builds the runtime without injected test doubles.
 - `FINANCE_AUTH_AUDIENCE`
   - Expected `aud` claim.
   - Defaults to `authenticated` when omitted.
+
+## Worker Environment Variables
+
+The executable worker requires the same `FINANCE_DATABASE_URL` plus:
+
+- `FINANCE_WORKER_ACTOR_ID`
+  - UUID of a provisioned service actor with the required Finance permission.
+- `FINANCE_WORKER_TENANT_ID`
+  - UUID of the tenant scope the worker is authorized to process.
+
+The worker no longer starts with an in-memory database or synthetic membership
+grant. Create the service membership through the approved platform migration or
+administration workflow before deployment.
 
 ## Runtime Behavior
 

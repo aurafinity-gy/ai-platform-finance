@@ -18,6 +18,8 @@ the target environment.
 - `FINANCE_AUTH_JWKS_URL`
 - `FINANCE_AUTH_ISSUER`
 - Optional `FINANCE_AUTH_AUDIENCE`
+- `FINANCE_WORKER_ACTOR_ID`
+- `FINANCE_WORKER_TENANT_ID`
 
 ## Services
 
@@ -28,7 +30,8 @@ the target environment.
 
 - `finance-worker`
   - Runs the Finance background worker for research workflows.
-  - Uses the same release version and runtime configuration as the API.
+  - Uses the same release version and database, with a provisioned service
+    actor and tenant scope.
 
 ## Usage
 
@@ -50,4 +53,3 @@ docker compose --env-file <release.env> -f compose.release.yaml up -d
 - [`docs/runbooks/release-operations.md`](release-operations.md)
 - [`docs/runbooks/staging-validation.md`](staging-validation.md)
 - [`docs/runbooks/post-release.md`](post-release.md)
-

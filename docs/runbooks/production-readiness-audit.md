@@ -4,7 +4,7 @@ This audit is the final pre-deploy checklist for the Finance application. It
 separates what is already in the repository from what still needs to be
 completed in the target environment before production promotion.
 
-Status: draft, 2026-08-26
+Status: draft, 2026-08-31
 
 ## Repository Readiness
 
@@ -17,6 +17,8 @@ Status: draft, 2026-08-26
 - [x] The repo root README links to the deployment path.
 - [x] A release-docs validation script exists.
 - [x] A CI workflow validates the release-docs contract.
+- [x] The worker production entry point requires Postgres and explicit service
+      identity configuration.
 
 ## Still Open Before Production
 

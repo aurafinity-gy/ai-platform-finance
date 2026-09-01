@@ -37,12 +37,10 @@ services:
     pull_policy: always
     environment:
       FINANCE_DATABASE_URL: ${FINANCE_DATABASE_URL:?}
-      FINANCE_AUTH_JWKS_URL: ${FINANCE_AUTH_JWKS_URL:?}
-      FINANCE_AUTH_ISSUER: ${FINANCE_AUTH_ISSUER:?}
-      FINANCE_AUTH_AUDIENCE: ${FINANCE_AUTH_AUDIENCE:-authenticated}
+      FINANCE_WORKER_ACTOR_ID: ${FINANCE_WORKER_ACTOR_ID:?}
+      FINANCE_WORKER_TENANT_ID: ${FINANCE_WORKER_TENANT_ID:?}
     restart: unless-stopped
     cap_drop: ["ALL"]
     read_only: true
     security_opt: ["no-new-privileges:true"]
     tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
-

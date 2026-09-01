@@ -71,6 +71,9 @@ Status: checklist, 2026-08-25
 - [ ] `readyz` returns healthy with the real database and auth dependencies.
 - [ ] The service starts with the production configuration and image digest.
 - [ ] Worker processes, if used, are deployed and healthy.
+- [ ] If the worker is deployed, `FINANCE_WORKER_ACTOR_ID` and
+      `FINANCE_WORKER_TENANT_ID` identify a provisioned least-privilege service
+      membership.
 - [ ] No local-only bootstrap path is required in production.
 - [ ] The release image is immutable and referenced by digest or locked tag.
 
