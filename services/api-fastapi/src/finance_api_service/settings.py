@@ -1,6 +1,7 @@
 from collections.abc import Mapping
 from dataclasses import dataclass
 import os
+from pathlib import Path
 
 
 @dataclass(frozen=True, slots=True)
@@ -15,8 +16,12 @@ class RuntimeSettings:
         cls, environment: Mapping[str, str] | None = None
     ) -> "RuntimeSettings":
         values = environment or os.environ
+        database_url = values.get("FINANCE_DATABASE_URL", "").strip()
+        database_url_file = values.get("FINANCE_DATABASE_URL_FILE", "").strip()
+        if not database_url and database_url_file:
+            database_url = Path(database_url_file).read_text(encoding="utf-8").strip()
         required = {
-            "FINANCE_DATABASE_URL": values.get("FINANCE_DATABASE_URL", "").strip(),
+            "FINANCE_DATABASE_URL": database_url,
             "FINANCE_AUTH_JWKS_URL": values.get("FINANCE_AUTH_JWKS_URL", "").strip(),
             "FINANCE_AUTH_ISSUER": values.get("FINANCE_AUTH_ISSUER", "").strip(),
         }

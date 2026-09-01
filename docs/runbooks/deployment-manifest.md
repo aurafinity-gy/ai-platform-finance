@@ -15,7 +15,9 @@ the target environment.
 - `FINANCE_IMAGE_REGISTRY`
 - `FINANCE_RELEASE_VERSION`
 - `FINANCE_API_BIND_ADDRESS`
-- `FINANCE_DATABASE_URL`
+- `FINANCE_DATABASE_URL_FILE`
+- `FINANCE_SECRET_DIRECTORY`
+- `FINANCE_PLATFORM_NETWORK`
 - `FINANCE_AUTH_JWKS_URL`
 - `FINANCE_AUTH_ISSUER`
 - Optional `FINANCE_AUTH_AUDIENCE`
@@ -44,6 +46,9 @@ docker compose --env-file <release.env> -f compose.release.yaml up -d
 ## Operational Notes
 
 - Keep the release environment file outside source control.
+- The database URL is mounted from the Foundation-managed runtime secret
+  directory and is not placed in the release environment file.
+- Attach Finance only to the approved Foundation private Compose network.
 - Use immutable image tags or digests for `FINANCE_RELEASE_VERSION`.
 - Verify the deployed artifact against the staging validation and post-release
   runbooks.

@@ -14,6 +14,9 @@ identity settings described below.
 - `FINANCE_DATABASE_URL`
   - Postgres connection string for the Finance unit of work.
   - Example: `postgresql://platform_api:secret@localhost:5432/postgres`
+- `FINANCE_DATABASE_URL_FILE`
+  - Alternative to `FINANCE_DATABASE_URL`; path to a mounted secret file.
+  - The file setting takes effect only when the direct URL is absent.
 
 - `FINANCE_AUTH_JWKS_URL`
   - HTTPS URL for the JSON Web Key Set used to verify bearer tokens.

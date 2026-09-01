@@ -3,6 +3,7 @@ import os
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import Any
 from uuid import UUID, uuid4
 
@@ -126,8 +127,12 @@ class WorkerRuntimeSettings:
         cls, environment: Mapping[str, str] | None = None
     ) -> "WorkerRuntimeSettings":
         values = environment or os.environ
+        database_url = values.get("FINANCE_DATABASE_URL", "").strip()
+        database_url_file = values.get("FINANCE_DATABASE_URL_FILE", "").strip()
+        if not database_url and database_url_file:
+            database_url = Path(database_url_file).read_text(encoding="utf-8").strip()
         required = {
-            "FINANCE_DATABASE_URL": values.get("FINANCE_DATABASE_URL", "").strip(),
+            "FINANCE_DATABASE_URL": database_url,
             "FINANCE_WORKER_ACTOR_ID": values.get(
                 "FINANCE_WORKER_ACTOR_ID", ""
             ).strip(),

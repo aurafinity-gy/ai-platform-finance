@@ -9,7 +9,7 @@ services:
     image: ${FINANCE_IMAGE_REGISTRY:?}/finance-api-fastapi:${FINANCE_RELEASE_VERSION:?}
     pull_policy: always
     environment:
-      FINANCE_DATABASE_URL: ${FINANCE_DATABASE_URL:?}
+      FINANCE_DATABASE_URL_FILE: /run/secrets/finance_database_url
       FINANCE_AUTH_JWKS_URL: ${FINANCE_AUTH_JWKS_URL:?}
       FINANCE_AUTH_ISSUER: ${FINANCE_AUTH_ISSUER:?}
       FINANCE_AUTH_AUDIENCE: ${FINANCE_AUTH_AUDIENCE:-authenticated}
@@ -27,6 +27,8 @@ services:
       timeout: 5s
       retries: 20
     restart: unless-stopped
+    networks: [foundation-private]
+    secrets: [finance_database_url]
     cap_drop: ["ALL"]
     read_only: true
     security_opt: ["no-new-privileges:true"]
@@ -36,11 +38,22 @@ services:
     image: ${FINANCE_IMAGE_REGISTRY:?}/finance-worker:${FINANCE_RELEASE_VERSION:?}
     pull_policy: always
     environment:
-      FINANCE_DATABASE_URL: ${FINANCE_DATABASE_URL:?}
+      FINANCE_DATABASE_URL_FILE: /run/secrets/finance_database_url
       FINANCE_WORKER_ACTOR_ID: ${FINANCE_WORKER_ACTOR_ID:?}
       FINANCE_WORKER_TENANT_ID: ${FINANCE_WORKER_TENANT_ID:?}
     restart: unless-stopped
+    networks: [foundation-private]
+    secrets: [finance_database_url]
     cap_drop: ["ALL"]
     read_only: true
     security_opt: ["no-new-privileges:true"]
     tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+
+networks:
+  foundation-private:
+    external: true
+    name: ${FINANCE_PLATFORM_NETWORK:?}
+
+secrets:
+  finance_database_url:
+    file: ${FINANCE_SECRET_DIRECTORY:?}/api-database-url
