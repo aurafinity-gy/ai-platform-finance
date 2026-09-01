@@ -6,6 +6,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, Request, status
 from finance_application import (
+    FINANCE_RESEARCH_CREATE_PERMISSION,
     CreateFinanceResearch,
     CreateFinanceResearchHandler,
     EnqueueFinanceResearchHandler,
