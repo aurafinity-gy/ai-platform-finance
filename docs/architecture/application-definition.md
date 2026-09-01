@@ -63,5 +63,5 @@ public route must be added as an explicitly reviewed application boundary.
 - [x] Finance worker is running on the shared private network.
 - [x] Finance health, readiness, tenant, audit, and idempotency checks pass.
 - [x] The first Finance research-intake UI journey is implemented.
-- [ ] The authenticated browser journey is accepted with the approved staging operator.
+- [x] The authenticated browser journey is accepted with the approved staging operator.
 - [ ] Production release approval is recorded for the product application.

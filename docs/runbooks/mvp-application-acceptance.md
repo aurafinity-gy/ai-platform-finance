@@ -42,5 +42,6 @@ Record the following without storing tokens, passwords, or personal data:
 The shared Foundation and Finance staging services, private Finance API, worker,
 Postgres persistence, JWT context, tenant authorization, audit, idempotency,
 public HTTPS, fail-closed ingress checks, and the unauthenticated `/finance`
-route check have passed. The remaining acceptance action is to sign in with the
-approved staging operator and submit one research request through the browser.
+route check have passed. The approved staging operator signed in, selected the
+synthetic tenant, and submitted a research request through the browser
+successfully.
