@@ -41,8 +41,10 @@ class InMemoryFinanceJobRepository:
     async def complete(self, *, job_id: UUID) -> None:
         del job_id
 
-    async def fail(self, *, job_id: UUID, error: str, retry_at: datetime) -> None:
-        del job_id, error, retry_at
+    async def fail(
+        self, *, job_id: UUID, error: str, retry_at: datetime, dead_letter: bool = False
+    ) -> None:
+        del job_id, error, retry_at, dead_letter
 
 
 class InMemoryFinanceMembershipRepository:

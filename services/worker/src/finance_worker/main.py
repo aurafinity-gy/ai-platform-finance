@@ -2,7 +2,7 @@ import asyncio
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any
 from uuid import UUID, uuid4
 
@@ -12,6 +12,7 @@ from finance_application import (
     DeterministicFinanceResearchWorkflow,
     RequestContext,
 )
+from finance_domain import ResearchMaterial, SourceMaterial
 from finance_persistence import (
     InMemoryFinanceUnitOfWorkFactory,
     PostgresFinanceUnitOfWorkFactory,
@@ -23,6 +24,8 @@ from psycopg_pool import AsyncConnectionPool
 class FinanceResearchWorker:
     handler: CreateFinanceResearchHandler
     context: RequestContext
+    uow_factory: Any | None = None
+    worker_id: str = "finance-worker"
     queue: asyncio.Queue[CreateFinanceResearch] = field(default_factory=asyncio.Queue)
     results: list[dict[str, Any]] = field(default_factory=list)
 
@@ -33,8 +36,44 @@ class FinanceResearchWorker:
         try:
             command = self.queue.get_nowait()
         except asyncio.QueueEmpty:
+            command = None
+        if command is not None:
+            result = await self.handler.execute(command, self.context)
+            self._record_result(result)
+            self.queue.task_done()
+            return True
+
+        if self.uow_factory is None:
             return False
-        result = await self.handler.execute(command, self.context)
+        async with self.uow_factory.create(self.context) as uow:
+            job = await uow.jobs.claim(worker_id=self.worker_id)
+        if job is None:
+            return False
+
+        job_context = RequestContext(
+            actor_id=job.actor_id,
+            tenant_id=job.tenant_id,
+            correlation_id=f"{self.worker_id}:{job.job_id}",
+        )
+        try:
+            result = await self.handler.execute(
+                _command_from_payload(job.payload), job_context
+            )
+        except Exception as exc:
+            async with self.uow_factory.create(self.context) as uow:
+                await uow.jobs.fail(
+                    job_id=job.job_id,
+                    error=str(exc),
+                    retry_at=datetime.now(UTC) + timedelta(seconds=30),
+                    dead_letter=job.attempts >= 5,
+                )
+            return True
+        async with self.uow_factory.create(self.context) as uow:
+            await uow.jobs.complete(job_id=job.job_id)
+        self._record_result(result)
+        return True
+
+    def _record_result(self, result: Any) -> None:
         self.results.append(
             {
                 "finance_research_id": str(result.finance_research_id),
@@ -43,8 +82,6 @@ class FinanceResearchWorker:
                 "status": result.status,
             }
         )
-        self.queue.task_done()
-        return True
 
     async def serve(self) -> None:
         while True:
@@ -139,6 +176,8 @@ async def serve_runtime_worker(
                 tenant_id=runtime.tenant_id,
                 correlation_id=f"finance-worker:{runtime.actor_id}",
             ),
+            uow_factory=PostgresFinanceUnitOfWorkFactory(pool),
+            worker_id=f"finance-worker:{runtime.actor_id}",
         )
         await worker.serve()
     finally:
@@ -154,6 +193,40 @@ class _SystemClock:
 class _UuidGenerator:
     def new_uuid(self) -> UUID:
         return uuid4()
+
+
+def _command_from_payload(payload: dict[str, Any]) -> CreateFinanceResearch:
+    return CreateFinanceResearch(
+        request_id=UUID(payload["request_id"]),
+        source_domain=payload["source_domain"],
+        source_reference=payload["source_reference"],
+        instrument=payload["instrument"],
+        objective=payload["objective"],
+        thesis=payload.get("thesis"),
+        horizon_days=payload.get("horizon_days"),
+        domain_context=payload["domain_context"],
+        research=tuple(
+            ResearchMaterial.create(item["summary"], tuple(item["facts"]))
+            for item in payload.get("research", [])
+        ),
+        sources=tuple(
+            SourceMaterial.create(
+                source_reference=item["source_reference"],
+                title=item["title"],
+                url=item.get("url"),
+                as_of=(
+                    datetime.fromisoformat(item["as_of"])
+                    if item.get("as_of")
+                    else None
+                ),
+            )
+            for item in payload.get("sources", [])
+        ),
+        constraints=tuple(payload.get("constraints", [])),
+        quality_metadata=payload.get("quality_metadata", {}),
+        idempotency_key=payload["idempotency_key"],
+        contract_version=payload["contract_version"],
+    )
 
 
 def run() -> None:

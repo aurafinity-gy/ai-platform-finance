@@ -316,6 +316,7 @@ def _command_payload(command: CreateFinanceResearch) -> dict[str, object]:
     return {
         "operation": _OPERATION,
         "contract_version": command.contract_version,
+        "idempotency_key": command.idempotency_key,
         "request_id": str(command.request_id),
         "source_domain": command.source_domain,
         "source_reference": command.source_reference,

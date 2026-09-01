@@ -32,6 +32,9 @@ The executable worker requires the same `FINANCE_DATABASE_URL` plus:
 - `FINANCE_WORKER_TENANT_ID`
   - UUID of the tenant scope the worker is authorized to process.
 
+The worker identity must have the `finance.research.worker` permission in that
+tenant. It should not be granted broad human or live-trading permissions.
+
 The worker no longer starts with an in-memory database or synthetic membership
 grant. Create the service membership through the approved platform migration or
 administration workflow before deployment.

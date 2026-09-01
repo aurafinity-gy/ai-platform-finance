@@ -21,6 +21,7 @@ migration:
 1. `infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql`
 2. `infrastructure/supabase/migrations/202608130001_finance_research.sql`
 3. `infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql`
+4. `infrastructure/supabase/migrations/202608310003_finance_research_worker_claim.sql`
 
 That order matters because the Finance migration depends on the shared audit
 table.
@@ -52,6 +53,7 @@ database you want to update.
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608130001_finance_research.sql
 psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql
+psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -f infrastructure/supabase/migrations/202608310003_finance_research_worker_claim.sql
 ```
 
 If you are applying to a containerized database instead of a direct URL,
@@ -103,3 +105,4 @@ psql "$env:FINANCE_DATABASE_URL" -v ON_ERROR_STOP=1 -c "update platform.membersh
 - [`infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql`](../../infrastructure/supabase/migrations/202608130000_platform_audit_entries.sql)
 - [`infrastructure/supabase/migrations/202608130001_finance_research.sql`](../../infrastructure/supabase/migrations/202608130001_finance_research.sql)
 - [`infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql`](../../infrastructure/supabase/migrations/202608310002_finance_research_jobs.sql)
+- [`infrastructure/supabase/migrations/202608310003_finance_research_worker_claim.sql`](../../infrastructure/supabase/migrations/202608310003_finance_research_worker_claim.sql)

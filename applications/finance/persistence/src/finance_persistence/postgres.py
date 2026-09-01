@@ -250,15 +250,23 @@ class PostgresFinanceJobRepository:
             (job_id,),
         )
 
-    async def fail(self, *, job_id: UUID, error: str, retry_at: datetime) -> None:
+    async def fail(
+        self,
+        *,
+        job_id: UUID,
+        error: str,
+        retry_at: datetime,
+        dead_letter: bool = False,
+    ) -> None:
         await self._connection.execute(
             """
             update finance.research_jobs
-            set status = 'queued', available_at = %s, last_error = %s,
+            set status = case when %s then 'failed' else 'queued' end,
+                available_at = %s, last_error = %s,
                 locked_at = null, locked_by = null
             where id = %s and status = 'processing'
             """,
-            (retry_at, error[:2_000], job_id),
+            (dead_letter, retry_at, error[:2_000], job_id),
         )
 
 

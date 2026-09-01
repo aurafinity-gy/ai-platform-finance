@@ -30,7 +30,8 @@ production-shaped environment before promotion.
 - Confirm `finance.command_idempotency` exists.
 - Confirm row-level security is enabled on Finance-owned tables.
 - If asynchronous research is enabled, confirm `finance.research_jobs` exists
-  and exercise claim, retry, and lease-expiry behavior.
+  and the worker-claim migration is applied before exercising claim, retry,
+  and lease-expiry behavior.
 
 ## Runtime Validation
 

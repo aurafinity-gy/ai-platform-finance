@@ -64,6 +64,7 @@ ai-platform-finance/
         202608130000_platform_audit_entries.sql
         202608130001_finance_research.sql
         202608310002_finance_research_jobs.sql
+        202608310003_finance_research_worker_claim.sql
   services/
     api-fastapi/
       src/

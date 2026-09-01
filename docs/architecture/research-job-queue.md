@@ -13,7 +13,8 @@ queued -> processing -> succeeded
                     -> failed
 ```
 
-Workers claim only eligible `queued` jobs, increment `attempts`, and set
+Workers with `finance.research.worker` permission claim only eligible `queued`
+jobs within their tenant, increment `attempts`, and set
 `locked_at` and `locked_by`. A lease timeout can return abandoned `processing`
 jobs to `queued`; the retry policy and maximum attempts belong to the worker
 runbook, not to the domain model.
@@ -29,6 +30,6 @@ runbook, not to the domain model.
 - Completion still writes the existing research record and audit entry in the
   same Finance unit-of-work boundary.
 
-The current HTTP endpoint remains synchronous. The next implementation step is
-to add an enqueue command and replace the worker's in-process queue with claim,
+The synchronous HTTP endpoint remains available for compatibility. The
+asynchronous endpoint enqueues work, and the worker performs claim,
 acknowledge, retry, and dead-letter operations against this table.

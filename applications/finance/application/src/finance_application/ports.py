@@ -90,7 +90,9 @@ class FinanceResearchJobRepository(Protocol):
 
     async def complete(self, *, job_id: UUID) -> None: ...
 
-    async def fail(self, *, job_id: UUID, error: str, retry_at: datetime) -> None: ...
+    async def fail(
+        self, *, job_id: UUID, error: str, retry_at: datetime, dead_letter: bool = False
+    ) -> None: ...
 
 
 class MembershipRepository(Protocol):
