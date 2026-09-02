@@ -186,8 +186,7 @@ class PostgresFinanceJobRepository:
             insert into finance.research_jobs (
                 id, tenant_id, actor_id, request_id, operation, payload
             ) values (%s, %s, %s, %s, 'finance.research.create', %s)
-            on conflict (tenant_id, request_id, operation) do update
-                set payload = finance.research_jobs.payload
+            on conflict (tenant_id, request_id, operation) do nothing
             returning id, tenant_id, actor_id, request_id, payload, attempts
             """,
             (
@@ -199,6 +198,19 @@ class PostgresFinanceJobRepository:
             ),
         )
         row = await cursor.fetchone()
+        if row is None:
+            cursor = await self._connection.execute(
+                """
+                select id, tenant_id, actor_id, request_id, payload, attempts
+                from finance.research_jobs
+                where tenant_id = %s and actor_id = %s
+                  and request_id = %s and operation = 'finance.research.create'
+                """,
+                (job.tenant_id, job.actor_id, job.request_id),
+            )
+            row = await cursor.fetchone()
+        if row is None:
+            raise RuntimeError("Finance research job could not be enqueued.")
         return FinanceResearchJob(
             job_id=row["id"],
             tenant_id=row["tenant_id"],
