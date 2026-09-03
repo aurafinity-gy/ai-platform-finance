@@ -7,7 +7,9 @@ foundation-provided Postgres/Auth deployment and the Finance API/worker.
 
 - Run on the staging runtime VM as a privileged operator.
 - Foundation Auth, Postgres, Finance API, and Finance worker containers are running.
-- `/run/m5-provider-admission/password` exists for the synthetic operator.
+- `/srv/platform/runtime-secrets/m5-provider-admission/password` exists for the
+  synthetic operator; `/run/m5-provider-admission/password` is retained only as
+  a compatibility fallback.
 - `/srv/platform/runtime-secrets/supabase-anon-key` exists.
 - The synthetic operator has `finance.research.create` for the staging tenant.
 
@@ -23,6 +25,18 @@ sh scripts/staging/bootstrap-finance-staging-permissions.sh
 
 The permission bootstrap is idempotent and verifies that the staging operator
 is active and can create Finance research jobs.
+
+On a production-shaped runtime, install the Finance reconciliation hook once
+as part of the release installation:
+
+```sh
+sh scripts/staging/install-finance-restart-recovery.sh
+```
+
+Foundation runs the hook automatically after the VM starts and after the
+staging identity bootstrap completes. The synthetic password is stored in the
+persistent runtime-secrets directory and copied into `/run` for compatibility
+with older operators.
 
 Run the checked-in `scripts/staging/finance-smoke-test.sh` through the staging
 VM Run Command mechanism, or execute it directly on the runtime VM after the

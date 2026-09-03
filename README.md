@@ -59,6 +59,7 @@ Start with:
 - [Finance staging validation script](scripts/finance-staging-validation.ps1)
 - [Finance staging smoke test](scripts/staging/finance-smoke-test.sh)
 - [Finance staging permission bootstrap](scripts/staging/bootstrap-finance-staging-permissions.sh)
+- [Finance restart recovery installer](scripts/staging/install-finance-restart-recovery.sh)
 - [Shared release and deployment entry point](../ai-platform-handbook/volume-11-delivery-workflows/deployment-and-release-entry-point.md)
 - [Finance agent research ADR](docs/decisions/0002-finance-agent-research-slice.md)
 - [Content consumer decision](docs/decisions/0001-content-brief-consumer.md)

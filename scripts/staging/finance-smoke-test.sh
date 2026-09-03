@@ -5,9 +5,13 @@ tenant_id='10000000-0000-0000-0000-000000000001'
 email='operator.staging@example.test'
 work="$(mktemp -d /run/finance-smoke.XXXXXX)"
 trap 'rm -rf "$work"' EXIT
+password_path="${FINANCE_STAGING_PASSWORD_PATH:-/srv/platform/runtime-secrets/m5-provider-admission/password}"
+if [ ! -s "$password_path" ]; then
+  password_path='/run/m5-provider-admission/password'
+fi
 
 for required in \
-  /run/m5-provider-admission/password \
+  "$password_path" \
   /srv/platform/runtime-secrets/supabase-anon-key; do
   test -s "$required"
 done
@@ -21,7 +25,7 @@ test -n "$auth_ip"
 test -n "$finance_ip"
 
 anon_key="$(tr -d '\r\n' < /srv/platform/runtime-secrets/supabase-anon-key)"
-python3 - "$email" /run/m5-provider-admission/password "$work/auth.json" <<'PY'
+python3 - "$email" "$password_path" "$work/auth.json" <<'PY'
 import json
 import sys
 
