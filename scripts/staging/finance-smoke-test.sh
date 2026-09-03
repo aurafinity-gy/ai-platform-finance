@@ -17,12 +17,13 @@ for required in \
 done
 echo 'stage=inputs.pass'
 
-auth_ip="$(docker inspect ai-platform-foundation-auth-1 \
-  --format '{{range .NetworkSettings.Networks}}{{if .IPAddress}}{{.IPAddress}}{{"\n"}}{{end}}{{end}}' \
-  | sed -n '1p')"
-finance_ip="$(docker inspect ai-platform-finance-finance-api-1 \
-  --format '{{range .NetworkSettings.Networks}}{{if .IPAddress}}{{.IPAddress}}{{"\n"}}{{end}}{{end}}' \
-  | sed -n '1p')"
+container_ip() {
+  docker inspect "$1" --format '{{json .NetworkSettings.Networks}}' |
+    python3 -c 'import json, sys; networks = json.load(sys.stdin); print(next((value.get("IPAddress", "") for value in networks.values() if value.get("IPAddress")), ""))'
+}
+
+auth_ip="$(container_ip ai-platform-foundation-auth-1)"
+finance_ip="$(container_ip ai-platform-finance-finance-api-1)"
 test -n "$auth_ip"
 test -n "$finance_ip"
 
