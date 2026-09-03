@@ -87,6 +87,7 @@ enqueue() {
 }
 
 first_http="$(enqueue "$work/first.json")"
+echo "stage=enqueue http=$first_http"
 test "$first_http" = 202
 job_id="$(python3 - "$work/first.json" <<'PY'
 import json
@@ -128,6 +129,7 @@ test "$final_status" = succeeded
 echo 'stage=worker-recovery.pass status=succeeded'
 
 replay_http="$(enqueue "$work/replay.json")"
+echo "stage=replay http=$replay_http"
 test "$replay_http" = 202
 replay_job_id="$(python3 - "$work/replay.json" <<'PY'
 import json
@@ -143,6 +145,7 @@ unauthenticated_http="$(curl --silent --show-error \
   --output /dev/null \
   --write-out '%{http_code}' \
   "http://${finance_ip}:8011/v1/finance-researches/jobs/${job_id}")"
+echo "stage=unauthenticated-rejection http=$unauthenticated_http"
 test "$unauthenticated_http" = 401
 echo 'stage=unauthenticated-rejection.pass http=401'
 
