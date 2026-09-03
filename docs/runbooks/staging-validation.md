@@ -13,6 +13,17 @@ foundation-provided Postgres/Auth deployment and the Finance API/worker.
 
 ## Run
 
+After a VM restart, run the foundation synthetic identity bootstrap followed by
+the Finance permission bootstrap:
+
+```sh
+/srv/platform/current/tools/operations/bootstrap-staging-synthetic-identity.sh
+sh scripts/staging/bootstrap-finance-staging-permissions.sh
+```
+
+The permission bootstrap is idempotent and verifies that the staging operator
+is active and can create Finance research jobs.
+
 Run the checked-in `scripts/staging/finance-smoke-test.sh` through the staging
 VM Run Command mechanism, or execute it directly on the runtime VM after the
 release has installed it:
@@ -48,10 +59,10 @@ passwords, anon keys, bearer tokens, or response bodies containing credentials.
 
 ## Recovery notes
 
-If the VM has restarted, run the foundation synthetic identity bootstrap before
-the smoke test. The bootstrap must be followed by the Finance permission grant
-unless the deployment automation applies that grant. Do not hard-code Docker
-container IP addresses; they change when containers are recreated.
+If the VM has restarted, run both bootstrap scripts before the smoke test. Do
+not hard-code Docker container IP addresses; they change when containers are
+recreated. The release automation should run this same sequence as a
+post-start reconciliation step rather than relying on manual recovery.
 
 ## Release gate
 
