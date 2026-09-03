@@ -18,9 +18,11 @@ done
 echo 'stage=inputs.pass'
 
 auth_ip="$(docker inspect ai-platform-foundation-auth-1 \
-  --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}')"
+  --format '{{range .NetworkSettings.Networks}}{{if .IPAddress}}{{.IPAddress}}{{"\n"}}{{end}}{{end}}' \
+  | sed -n '1p')"
 finance_ip="$(docker inspect ai-platform-finance-finance-api-1 \
-  --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}')"
+  --format '{{range .NetworkSettings.Networks}}{{if .IPAddress}}{{.IPAddress}}{{"\n"}}{{end}}{{end}}' \
+  | sed -n '1p')"
 test -n "$auth_ip"
 test -n "$finance_ip"
 
