@@ -1,78 +1,60 @@
 # Finance Staging Validation
 
-Use this runbook to validate a Finance release candidate in a staging or
-production-shaped environment before promotion.
+The Finance staging smoke test is an operational acceptance check for the
+foundation-provided Postgres/Auth deployment and the Finance API/worker.
 
-## Inputs
+## Prerequisites
 
-- The exact image digest or immutable release tag to be promoted.
-- The target environment and namespace or deployment target.
-- The release owner and rollback owner.
-- The Finance production readiness checklist is complete or explicitly waived.
+- Run on the staging runtime VM as a privileged operator.
+- Foundation Auth, Postgres, Finance API, and Finance worker containers are running.
+- `/run/m5-provider-admission/password` exists for the synthetic operator.
+- `/srv/platform/runtime-secrets/supabase-anon-key` exists.
+- The synthetic operator has `finance.research.create` for the staging tenant.
 
-## Environment Checks
+## Run
 
-- Confirm the staging environment uses the Finance production runtime
-  configuration.
-- Confirm `FINANCE_API_BIND_ADDRESS` is set to the intended private or public
-  interface for the staging topology.
-- Confirm `FINANCE_DATABASE_URL`, `FINANCE_AUTH_JWKS_URL`, and
-  `FINANCE_AUTH_ISSUER` are populated.
-- Confirm any optional `FINANCE_AUTH_AUDIENCE` override matches the intended
-  token policy.
-- Confirm the deployment uses the same artifact that will be promoted to
-  production.
+Run the checked-in `scripts/staging/finance-smoke-test.sh` through the staging
+VM Run Command mechanism, or execute it directly on the runtime VM after the
+release has installed it:
 
-## Database Validation
-
-- Apply the additive Finance migrations in the documented order.
-- Confirm `platform.memberships` exists.
-- Confirm `platform.audit_entries` exists.
-- Confirm `finance.research_records` exists.
-- Confirm `finance.command_idempotency` exists.
-- Confirm row-level security is enabled on Finance-owned tables.
-- If asynchronous research is enabled, confirm `finance.research_jobs` exists
-  and the worker-claim migration is applied before exercising claim, retry,
-  and lease-expiry behavior.
-
-## Runtime Validation
-
-- Confirm `/livez` returns healthy.
-- Confirm `/readyz` returns healthy with real database and auth dependencies.
-- Confirm bearer-token verification rejects invalid issuer, audience, or
-  signature values.
-- Confirm tenant-scoped authorization works with the real membership data.
-- Confirm the release path does not require demo headers or synthetic identity
-  shortcuts.
-
-## Functional Validation
-
-- Run `pwsh -File scripts/finance-smoke-test.ps1` against the staging target.
-- Exercise the representative finance workflow or API entrypoints used by the
-  release.
-- Verify idempotency replay behavior on a repeated request.
-- Verify audit entries are written for accepted actions.
-
-## Exit Criteria
-
-- Health checks pass.
-- Smoke test passes.
-- Auth and tenant checks pass.
-- No unexpected schema, logging, or rollout issues appear.
-- The release is approved for promotion or explicitly stopped.
-
-## Automated Run
-
-With staging credentials and a staging bearer token available, run:
-
-```powershell
-pwsh -File scripts/finance-staging-validation.ps1 `
-  -DatabaseUrl $env:FINANCE_DATABASE_URL `
-  -ApiBaseUrl $env:FINANCE_STAGING_API_URL `
-  -BearerToken $env:FINANCE_STAGING_BEARER_TOKEN `
-  -TenantId $env:FINANCE_STAGING_TENANT_ID `
-  -ApplyMigrations
+```sh
+sh scripts/staging/finance-smoke-test.sh
 ```
 
-Omit `-ApplyMigrations` when migrations are managed by the deployment
-controller and only runtime validation is required.
+The script creates its own temporary request state and dynamically resolves the
+current Finance API container address. It must not be split across separate
+Run Command executions.
+
+## Checks
+
+The script verifies:
+
+- Synthetic input files are present.
+- Authenticated operator login succeeds.
+- Finance job enqueue returns HTTP 202.
+- The worker recovers after a restart and completes the job.
+- Replaying the request returns HTTP 202 and the same `job_id`.
+- An unauthenticated job lookup returns HTTP 401.
+- A Finance research audit entry is persisted.
+
+## Expected result
+
+```text
+{"event":"finance_staging_smoke.pass","async_status":"succeeded","idempotency":"same_job_id","worker_restart":"recovered","unauthenticated_status":401}
+```
+
+The audit count is cumulative and may be greater than one. The test never prints
+passwords, anon keys, bearer tokens, or response bodies containing credentials.
+
+## Recovery notes
+
+If the VM has restarted, run the foundation synthetic identity bootstrap before
+the smoke test. The bootstrap must be followed by the Finance permission grant
+unless the deployment automation applies that grant. Do not hard-code Docker
+container IP addresses; they change when containers are recreated.
+
+## Release gate
+
+The smoke test is necessary but not sufficient for production release. A release
+also requires successful deployment validation, migration verification, rollback
+readiness, monitoring/alert checks, and an approved production change record.
