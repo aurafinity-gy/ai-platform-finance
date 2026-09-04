@@ -15,8 +15,17 @@ criteria.
 - Change approver: Damon Yee <damon.yee@aurafinity.com>
 - Production on-call escalation: Damon Yee <damon.yee@aurafinity.com>
 
+Approval status:
+
+- Approved by: Damon Yee <damon.yee@aurafinity.com>
+- Approved on: 2026-09-04
+- Approved scope: production change window and bounded Finance canary
+- Exact execution window: **To be recorded before deployment**
+- Allowlisted production tenant/user: **To be recorded before deployment**
+
 The release owner and rollback owner may be the same person. Independent security,
-change, and escalation ownership is recorded separately for this release.
+change, and escalation ownership is recorded separately for this release. The
+approved canary remains paper-research-only with no broker write access.
 
 ## Evidence
 
