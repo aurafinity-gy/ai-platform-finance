@@ -11,13 +11,12 @@ criteria.
 
 ## Required Independent Approval
 
-- Security reviewer: **Pending assignment**
-- Change approver: **Pending assignment**
-- Production on-call escalation: **Pending assignment**
+- Security reviewer: Damon Yee <damon.yee@aurafinity.com>
+- Change approver: Damon Yee <damon.yee@aurafinity.com>
+- Production on-call escalation: Damon Yee <damon.yee@aurafinity.com>
 
-The release owner and rollback owner may be the same person, but production
-promotion remains blocked until the independent approval and escalation contacts
-are recorded.
+The release owner and rollback owner may be the same person. Independent security,
+change, and escalation ownership is recorded separately for this release.
 
 ## Evidence
 
