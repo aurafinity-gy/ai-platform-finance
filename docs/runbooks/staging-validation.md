@@ -83,3 +83,6 @@ post-start reconciliation step rather than relying on manual recovery.
 The smoke test is necessary but not sufficient for production release. A release
 also requires successful deployment validation, migration verification, rollback
 readiness, monitoring/alert checks, and an approved production change record.
+
+The 2026-09-04 staging result is recorded in
+[`staging-evidence-2026-09-04.md`](staging-evidence-2026-09-04.md).
