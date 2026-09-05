@@ -21,7 +21,8 @@ Approval status:
 - Approved on: 2026-09-04
 - Approved scope: production change window and bounded Finance canary
 - Exact execution window: **To be recorded before deployment**
-- Allowlisted production tenant/user: **To be recorded before deployment**
+- Allowlisted production tenant: `Aurafinity Inc.` (production tenant ID to be verified)
+- Allowlisted production user: Gary Yee <gary.yee@aurafinity.com>
 
 The release owner and rollback owner may be the same person. Independent security,
 change, and escalation ownership is recorded separately for this release. The
