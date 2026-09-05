@@ -19,6 +19,8 @@ Status: draft, 2026-08-31
 - [x] A CI workflow validates the release-docs contract.
 - [x] The worker production entry point requires Postgres and explicit service
       identity configuration.
+- [x] Shared Foundation application onboarding and restart-recovery guidance is
+      recorded.
 
 ## Still Open Before Production
 

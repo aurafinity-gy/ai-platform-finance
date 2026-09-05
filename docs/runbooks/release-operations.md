@@ -11,6 +11,7 @@ deployment sequence. Use it alongside:
 - [`docs/runbooks/post-release.md`](post-release.md)
 - [`docs/runbooks/deployment-manifest.md`](deployment-manifest.md)
 - [`scripts/finance-smoke-test.ps1`](../../scripts/finance-smoke-test.ps1)
+- Shared Foundation onboarding: [application-production-onboarding](https://github.com/aurafinity-gy/ai-platform-foundation/blob/main/docs/runbooks/application-production-onboarding.md)
 
 ## Release Inputs
 
